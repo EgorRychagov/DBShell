@@ -1,15 +1,17 @@
-#include "DBshell.cpp"
+#include "DBshell.h"
 #include <sstream>
+#include <iostream>
 #include <chrono>
-
+#include <WS2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
 
 class timer
 {
-	chrono::time_point< chrono::high_resolution_clock> start_point;
+	std::chrono::time_point< std::chrono::high_resolution_clock> start_point;
 public:
 	timer()
 	{
-		start_point = chrono::high_resolution_clock::now();
+		start_point = std::chrono::high_resolution_clock::now();
 	}
 
 	~timer()
@@ -19,27 +21,27 @@ public:
 
 	void stop() 
 	{
-		auto end_point = chrono::high_resolution_clock::now();
+		auto end_point = std::chrono::high_resolution_clock::now();
 
-		auto start = chrono::time_point_cast<chrono::microseconds>(start_point).time_since_epoch().count();
-		auto end = chrono::time_point_cast<chrono::microseconds>(end_point).time_since_epoch().count();
+		auto start = std::chrono::time_point_cast<std::chrono::microseconds>(start_point).time_since_epoch().count();
+		auto end = std::chrono::time_point_cast<std::chrono::microseconds>(end_point).time_since_epoch().count();
 
 		auto duration = end - start;
 		double ms = duration * 0.001;
-		cout << duration << "us ( " << ms << "ms )";
+		std::cout << duration << "us ( " << ms << "ms )";
 	}
 };
 
-vector<string> request_maker(string request) 
+std::vector<std::string> request_maker(std::string request)
 {
-	string line;
-	string word;
-	vector<string> words;
+	std::string line;
+	std::string word;
+	std::vector<std::string> words;
 
-	basic_stringstream linestream = stringstream(request);
+	std::basic_stringstream linestream = std::stringstream(request);
 	getline(linestream, line);
 	line.erase(line.begin() + line.length() - 1);	// getting rid of \r
-	basic_stringstream wordstream = stringstream(line);
+	std::basic_stringstream wordstream = std::stringstream(line);
 	
 	while (getline(wordstream, word, ' ')) 
 	{
@@ -49,15 +51,15 @@ vector<string> request_maker(string request)
 	return words;
 }
 
-void say(SOCKET s, string msg)
+void say(SOCKET s, std::string msg)
 {
 	const char* c_msg = msg.c_str();
-	send(s, c_msg, msg.length(), 0);
+	send(s, c_msg, int(msg.length()), 0);
 }
 
-int main()//main()
+int main()
 {
-	shell entrance;
+	shell entrance{};
 
 	// initialize winsocket
 	WSAData ws_data{};
@@ -65,7 +67,7 @@ int main()//main()
 	int ws_ok = WSAStartup(ver, &ws_data);
 	if (ws_ok != 0)
 	{
-		cerr << "Can't initialize winsock. Quitting." << endl;
+		std::cerr << "Can't initialize winsock. Quitting." << std::endl;
 		return 1;
 	}
 
@@ -73,7 +75,7 @@ int main()//main()
 	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET)
 	{
-		cerr << "Can't create a socket. Quitting." << endl;
+		std::cerr << "Can't create a socket. Quitting." << std::endl;
 		return 1;
 	}
 
@@ -95,7 +97,7 @@ int main()//main()
 
 	if (client_socket == INVALID_SOCKET)
 	{
-		cerr << "Can't create client's socket" << endl;
+		std::cerr << "Can't create client's socket" << std::endl;
 	}
 	char host[NI_MAXHOST];
 	char service[NI_MAXSERV];
@@ -104,12 +106,12 @@ int main()//main()
 
 	if (getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0)
 	{
-		cout << host << "connected on port" << service << endl;
+		std::cout << host << "connected on port" << service << std::endl;
 	}
 	else
 	{
 		inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-		cout << host << "connected on port" << htons(client.sin_port) << endl;
+		std::cout << host << "connected on port" << htons(client.sin_port) << std::endl;
 	}
 
 	// closing listening socket
@@ -117,8 +119,12 @@ int main()//main()
 
 	// action's definition
 
-	map<string, int> command;
-	command["set"] = 0;
+	std::map<std::string, int> command;
+	
+	command["string"] = 0;
+	command["number"] = 0;
+	command["bool"] = 0;
+
 	command["delete"] = 1;
 	command["get"] = 2;
 	command["size"] = 3;
@@ -126,15 +132,16 @@ int main()//main()
 	command["disconnect"] = 5;
 	command["help"] = 6;
 
-	string msg;
+	std::string msg;
 	msg = "View available commands via typing 'help'\n";
 	say(client_socket, msg);
 
-	string action = "";
-	string key;
-	string record;
-	vector<string> request;
-	vector<string> keys;
+	std::string action = "";
+	std::string key;
+	std::string record;
+	std::string type;
+	std::vector<std::string> request;
+	std::vector<std::string> keys;
 
 	// getiing data and making echo message
 	char buf[4096];
@@ -151,17 +158,17 @@ int main()//main()
 
 		if (bytes_recieved == SOCKET_ERROR)
 		{
-			cerr << "error in recv(). Quitting." << endl;
+			std::cerr << "error in recv(). Quitting." << std::endl;
 			break;
 		}
 		else if (bytes_recieved == 0)
 		{
-			cout << "client disconnected" << endl;
+			std::cout << "client disconnected" << std::endl;
 			break;
 		}
 			
 		// making request
-		string str_buf(buf);
+		std::string str_buf(buf);
 
 		request = request_maker(str_buf);
 		if (!request.size())
@@ -181,13 +188,14 @@ int main()//main()
 			switch (command[action])
 			{
 			case 0:
+				type = request[0];
 				key = request[1];
 				record = request[2];
 
-				entrance.record_add(key, record);
-				msg = "Note was added to the key ";
+				entrance.record_add(type, key, record);
+				msg = "Note was added to the key <";
 				say(client_socket, msg);
-				say(client_socket, key);
+				say(client_socket, key + ">\n");
 				
 				break;
 			case 1:
@@ -195,7 +203,7 @@ int main()//main()
 
 				if (entrance.record_delete(key))
 				{
-					msg = "Note was succesfully deleted\n";
+					msg = "Erased\n";
 					say(client_socket, msg);
 				}
 				else
@@ -212,7 +220,7 @@ int main()//main()
 				
 				break;
 			case 3:
-				record = to_string(entrance.DB_size());
+				record = std::to_string(entrance.DB_size()) + "\n";
 				say(client_socket, record);
 				
 				break;
@@ -245,7 +253,7 @@ int main()//main()
 				break;
 			case 6:
 				msg = "Available commands:\n"
-					"set <key> <record> (creates record with a key)\n"
+					"<type> <key> <record> (creates record)\n"
 					"delete <key> (deletes record at the key)\n"
 					"get <key> (returns record at the key)\n"
 					"size (returns quantity of records)\n"

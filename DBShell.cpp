@@ -1,64 +1,76 @@
-#include<iostream>
-#include<string>
-#include<map>
-#include<vector>
-#include <WS2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
+#include "DBShell.h"
 
 using namespace std;
 
-class shell
+void shell::record_add(string type, string key, string record)
 {
-	map<string, string> DB;	
-
-public:
-
-	void record_add(string key, string record)
+	if (type == "string")
 	{
-		DB[key] = record;
+		db_str.set(key, record);
 	}
-
-	string record_get(string key)
+	else if (type == "number")
 	{
-		auto pair = DB.find(key);
-
-		if (pair != DB.end())
-		{
-			return pair->second;
-		}
-		else
-		{
-			return "Error: No record at this key";
-		}
+		db_number.set(key, record);
 	}
+	else
+	{
+		db_bool.set(key, record);
+	}
+}
 
-	bool record_delete(string key)
-	{		
-		auto pair = DB.find(key);
+string shell::record_get(string key)
+{
+	string type = db.type_check(key);
 
-		if (pair != DB.end())
-		{
-			DB.erase(key);
-			return true;
-		}
+	if (type == "string")
+	{
+		return db_str.get(key);
+	}
+	else if (type == "number")
+	{
+		return to_string(db_number.get(key));
+	}
+	else if (type == "bool")
+	{
+		return to_string(db_bool.get(key));
+	}
+	else
+	{
+		return "No record at this key";
+	}
+}
 
+bool shell::record_delete(string key)
+{
+	string type = db.type_check(key);
+
+	if (type == "string")
+	{
+		db_str.erase(key);
+		return true;
+	}
+	else if (type == "number")
+	{
+		db_number.erase(key);
+		return true;
+	}
+	else if (type == "bool")
+	{
+		db_bool.erase(key);
+		return true;
+	}
+	else
+	{
 		return false;
 	}
+}
 
-	int DB_size()
-	{
-		return DB.size();
-	}
+int shell::DB_size()
+{
+	return int(db.keys_send().size());
+}
 
-	vector<string> keys_get()
-	{
-		vector<string> keys;
-
-		for (map<string, string>::iterator it = DB.begin(); it != DB.end(); ++it)
-		{
-			keys.push_back(it->first);
-		}	
-
-		return keys;
-	}
-};
+vector<string> shell::keys_get()
+{
+	return db.keys_send();
+}
