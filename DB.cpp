@@ -24,76 +24,95 @@ string DB::type_check(string key)
 	else return "";
 }
 
-// string data func-s
-
-void DB_str::set(string key, string record)
+void DB::set(string type, string key, string record)
 {
-	db_str[key] = record;
-	keys_all[key] = "string";
-}
-
-string DB_str::get(string key)
-{
-	auto pair = db_str.find(key);
-	if (pair != db_str.end())
+	if (type == "string")
 	{
-		return pair->second;
+		db_str[key] = record;
+		keys_all[key] = "string";
+	}
+	else if (type == "number")
+	{
+		db_number[key] = stod(record);
+		keys_all[key] = "number";
+	}
+	else
+	{
+		if (record == "true")
+		{
+			db_bool[key] = "true";
+		}
+		else db_bool[key] = "false";
+
+		keys_all[key] = "bool";
 	}
 }
 
-void DB_str::erase(string key)
+string DB::get(string key)
 {
-	db_str.erase(key);
-	keys_all.erase(key);
-}
+	string type = type_check(key);
 
-// number data func-s
-
-void DB_number::set(string key, string record)
-{
-	db_number[key] = stod(record);
-	keys_all[key] = "number";
-}
-
-double DB_number::get(string key)
-{
-	auto pair = db_number.find(key);
-	if (pair != db_number.end())
+	if (type == "string")
 	{
-		return pair->second;
+		auto pair = db_str.find(key);
+		if (pair != db_str.end())
+		{
+			return pair->second;
+		}
+		else return "";
+	}
+	else if (type == "number")
+	{
+		auto pair = db_number.find(key);
+		if (pair != db_number.end())
+		{
+			return to_string(pair->second);
+		}
+		else return "";
+	}
+	else if (type == "bool")
+	{
+		auto pair = db_bool.find(key);
+		if (pair != db_bool.end())
+		{
+			if (pair->second == 1)
+			{
+				return "true";
+			}
+			else return "false";
+		}
+		else return "";
+	}
+	else
+	{
+		return "No record at this key";
 	}
 }
 
-void DB_number::erase(string key)
+bool DB::erase(string key)
 {
-	db_number.erase(key);
-	keys_all.erase(key);
-}
+	string type = type_check(key);
 
-// bool data func-s
-
-void DB_bool::set(string key, string record)
-{
-	if (record == "true")
+	if (type == "string")
 	{
-		db_bool[key] = "true";
+		db_str.erase(key);
+		keys_all.erase(key);
+		return true;
 	}
-	else db_bool[key] = "false";
-
-	keys_all[key] = "bool";
-}
-
-int DB_bool::get(string key)
-{
-	auto pair = db_bool.find(key);
-	if (pair != db_bool.end())
+	else if (type == "number")
 	{
-		return int(pair->second);
+		db_number.erase(key);
+		keys_all.erase(key);
+		return true;
 	}
-}
-
-void DB_bool::erase(string key)
-{
-	db_bool.erase(key);
-	keys_all.erase(key);
+	else if (type == "bool")
+	{
+		db_bool.erase(key);
+		keys_all.erase(key);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

@@ -6,11 +6,7 @@
 
 class shell
 {
-	DB db;
-
-	DB_str db_str;
-	DB_bool db_bool;
-	DB_number db_number;
+	DB data;
 
 public:
 	void record_add(std::string type, std::string key, std::string record);

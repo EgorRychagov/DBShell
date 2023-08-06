@@ -215,7 +215,7 @@ int main()
 				break;
 			case 2:
 				key = request[1];			
-				record = entrance.record_get(key);
+				record = entrance.record_get(key) + "\n";
 				say(client_socket, record);
 				
 				break;
@@ -231,8 +231,9 @@ int main()
 				{
 					for (int i = 0; i < keys.size(); i++)
 					{
-						say(client_socket, keys[i] + "\t");
+						say(client_socket, keys[i] + "  ");
 					}
+					say(client_socket,"\n");
 				}
 				else
 				{
