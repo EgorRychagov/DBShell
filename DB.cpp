@@ -1,8 +1,6 @@
 #include "DB.h"
 
 using namespace std;
-
-// data base func-s
  
 vector<string> DB::keys_send()
 {

@@ -11,6 +11,7 @@ protected:
 	std::map<std::string, std::string> db_str;
 	std::map<std::string, double> db_number;
 	std::map<std::string, bool> db_bool;
+
 public:
 	std::vector<std::string> keys_send();
 	std::string type_check(std::string key);

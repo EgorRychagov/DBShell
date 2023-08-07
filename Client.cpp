@@ -1,4 +1,4 @@
-#include "DBshell.h"
+#include "DB.h"
 #include <sstream>
 #include <iostream>
 #include <chrono>
@@ -59,7 +59,7 @@ void say(SOCKET s, std::string msg)
 
 int main()
 {
-	shell entrance{};
+	DB entrance{};
 
 	// initialize winsocket
 	WSAData ws_data{};
@@ -125,7 +125,7 @@ int main()
 	command["number"] = 0;
 	command["bool"] = 0;
 
-	command["delete"] = 1;
+	command["erase"] = 1;
 	command["get"] = 2;
 	command["size"] = 3;
 	command["keys"] = 4;
@@ -192,7 +192,7 @@ int main()
 				key = request[1];
 				record = request[2];
 
-				entrance.record_add(type, key, record);
+				entrance.set(type, key, record);
 				msg = "Note was added to the key <";
 				say(client_socket, msg);
 				say(client_socket, key + ">\n");
@@ -201,7 +201,7 @@ int main()
 			case 1:
 				key = request[1];
 
-				if (entrance.record_delete(key))
+				if (entrance.erase(key))
 				{
 					msg = "Erased\n";
 					say(client_socket, msg);
@@ -215,23 +215,23 @@ int main()
 				break;
 			case 2:
 				key = request[1];			
-				record = entrance.record_get(key) + "\n";
+				record = entrance.get(key) + "\n";
 				say(client_socket, record);
 				
 				break;
 			case 3:
-				record = std::to_string(entrance.DB_size()) + "\n";
+				record = std::to_string(entrance.keys_send().size()) + "\n";
 				say(client_socket, record);
 				
 				break;
 			case 4:
-				keys = entrance.keys_get();
+				keys = entrance.keys_send();
 
 				if (keys.size() != 0)
 				{
 					for (int i = 0; i < keys.size(); i++)
 					{
-						say(client_socket, keys[i] + "  ");
+						say(client_socket, keys[i] + " ");
 					}
 					say(client_socket,"\n");
 				}
@@ -255,7 +255,7 @@ int main()
 			case 6:
 				msg = "Available commands:\n"
 					"<type> <key> <record> (creates record)\n"
-					"delete <key> (deletes record at the key)\n"
+					"erase <key> (erases record at the key)\n"
 					"get <key> (returns record at the key)\n"
 					"size (returns quantity of records)\n"
 					"keys (returns existing keys)\n"
