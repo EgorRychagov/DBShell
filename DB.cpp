@@ -2,19 +2,11 @@
 
 using namespace std;
  
-vector<string> DB::keys_send()
-{
-	vector<string> keys;
-	for (map<string, string>::iterator it = keys_all.begin(); it != keys_all.end(); ++it)
-	{
-		keys.push_back(it->first);
-	}
-	return keys;
-}
-
 string DB::type_check(string key)
 {
 	auto pair = keys_all.find(key);
+	// timer here;
+
 	if (pair != keys_all.end())
 	{
 		return pair->second; //basicaly type
@@ -22,8 +14,22 @@ string DB::type_check(string key)
 	else return "";
 }
 
+vector<string> DB::keys_send()
+{	
+	vector<string> keys;
+	timer here;
+
+	for (map<string, string>::iterator it = keys_all.begin(); it != keys_all.end(); ++it)
+	{
+		keys.push_back(it->first);
+	}
+	return keys;
+}
+
 void DB::set(string type, string key, string record)
 {
+	timer here;
+
 	if (type == "string")
 	{
 		db_str[key] = record;
@@ -48,8 +54,9 @@ void DB::set(string type, string key, string record)
 
 string DB::get(string key)
 {
+	timer here;
 	string type = type_check(key);
-
+	
 	if (type == "string")
 	{
 		auto pair = db_str.find(key);
@@ -89,6 +96,7 @@ string DB::get(string key)
 
 bool DB::erase(string key)
 {
+	timer here;
 	string type = type_check(key);
 
 	if (type == "string")
