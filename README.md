@@ -10,13 +10,13 @@ This is a default program launch, that provides an access to data base via *TCP 
 > **Interraction**
 > - For recording use next synthax: `<type> <key> <record>`. Possible types are string, bool or double;
 > - In order to get a record, command `get <key>` is required (returns a record at the key if exists);
-> - Deleting record takes `delete <key>` erases record at the key if exists;
+> - Deleting record takes `delete <key>` (erases record at the key if exists);
 > - The command `keys` returns existing keys or warns about its absence;
 > - `size` returns amount of records;
 > - Use `disconnect` to finish your work on a programm.
 
 ## Benchmark
-While running a program in benchmark mode, it measures average recording time in *ms* of 100 records for every type with different initial size of records. Initial size varies from 10 thousands to 10 millions of records, multiplaying by 10 on evey stage.\
+While running a program in benchmark mode, it measures average recording time in *ms* of 100 records for every type with different initial size of records. Initial size varies from 10 thousands to 10 millions of records, multiplaying by 10 on evey stage.
 > **Latest results**
 > |Type|AVG Time (ms)|Initial Size|
 > |:-|:-|:-|
