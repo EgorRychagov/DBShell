@@ -13,7 +13,7 @@ This is a default program launch, that provides an access to data base via *TCP 
 > - Deleting record takes `delete <key>` (erases record at the key if exists);
 > - The command `keys` returns existing keys or warns about its absence;
 > - `size` returns amount of records;
-> - Use `disconnect` to finish your work on a programm.
+> - Use `disconnect` to finish your work on a program.
 
 ## Benchmark
 While running a program in benchmark mode, it measures average recording time in *ms* of 100 records for every type with different initial size of records. Initial size varies from 10 thousands to 10 millions of records, multiplaying by 10 on evey stage.
