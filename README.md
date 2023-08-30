@@ -20,15 +20,15 @@ While running a program in benchmark mode, it measures average recording time in
 > **Latest results**
 > |Type|AVG Time (ms)|Initial Size|
 > |:-|:-|:-|
-> |string|0.00358|10000|
-> |bool|0.00395|10000|
-> |double|0.00372|10000|
-> |string|0.0037 |100000|
-> |bool|0.00338|100000|
-> |double|0.00377 |100000|
-> |string|0.00446|1000000|
-> |bool|0.00826 |1000000|
-> |double|0.00405|1000000|
-> |string|0.08846|10000000|
-> |bool|0.07921|10000000|
-> |double|0.01131|10000000|
+> |string|0.00358|10^4|
+> |bool|0.00395|10^4|
+> |double|0.00372|10^4|
+> |string|0.0037 |10^5|
+> |bool|0.00338|10^5|
+> |double|0.00377 |10^5|
+> |string|0.00446|10^6|
+> |bool|0.00826 |10^6|
+> |double|0.00405|10^6|
+> |string|0.08846|10^7|
+> |bool|0.07921|10^7|
+> |double|0.01131|10^7|
