@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <chrono>
@@ -29,18 +29,18 @@ public:
 
 		//auto duration = end - start;
 		double ms = (end - start) * 0.001;
-		std::cout << "* Done in  " << ms << "ms *\n";
+		std::cout << ms << "ms\n";
 	}
 };
 
 class DB
 {
 protected:
-	std::map<std::string, std::string> keys_all;
+	std::unordered_map<std::string, std::string> keys_all;
 
-	std::map<std::string, std::string> db_str;
-	std::map<std::string, double> db_number;
-	std::map<std::string, bool> db_bool;
+	std::unordered_map<std::string, std::string> db_str;
+	std::unordered_map<std::string, double> db_number;
+	std::unordered_map<std::string, bool> db_bool;
 
 public:
 	std::vector<std::string> keys_send();
@@ -48,5 +48,6 @@ public:
 
 	void set(std::string type, std::string key, std::string record);
 	std::string get(std::string key);
-	bool erase(std::string key);
+	bool del(std::string key);
+	void drop();
 };

@@ -5,7 +5,6 @@ using namespace std;
 string DB::type_check(string key)
 {
 	auto pair = keys_all.find(key);
-	// timer here;
 
 	if (pair != keys_all.end())
 	{
@@ -17,9 +16,8 @@ string DB::type_check(string key)
 vector<string> DB::keys_send()
 {	
 	vector<string> keys;
-	timer here;
 
-	for (map<string, string>::iterator it = keys_all.begin(); it != keys_all.end(); ++it)
+	for (unordered_map<string, string>::iterator it = keys_all.begin(); it != keys_all.end(); ++it)
 	{
 		keys.push_back(it->first);
 	}
@@ -28,7 +26,6 @@ vector<string> DB::keys_send()
 
 void DB::set(string type, string key, string record)
 {
-	timer here;
 
 	if (type == "string")
 	{
@@ -54,7 +51,6 @@ void DB::set(string type, string key, string record)
 
 string DB::get(string key)
 {
-	timer here;
 	string type = type_check(key);
 	
 	if (type == "string")
@@ -94,9 +90,8 @@ string DB::get(string key)
 	}
 }
 
-bool DB::erase(string key)
+bool DB::del(string key)
 {
-	timer here;
 	string type = type_check(key);
 
 	if (type == "string")
@@ -121,4 +116,12 @@ bool DB::erase(string key)
 	{
 		return false;
 	}
+}
+
+void DB::drop()
+{
+	keys_all.clear();
+	db_str.clear();
+	db_bool.clear();
+	db_number.clear();
 }
